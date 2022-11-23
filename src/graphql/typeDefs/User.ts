@@ -9,10 +9,10 @@ export class User {
   email: string;
 
   @Field()
-  username: Date;
+  username: string;
 
   @Field()
-  name: Date;
+  name: string;
 
   @Field()
   createdAt: Date;
