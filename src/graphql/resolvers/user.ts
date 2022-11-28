@@ -9,8 +9,41 @@ import { hash, verify } from 'argon2';
 import { Prisma } from '@prisma/client';
 import { validateLoginInput } from '../../util/validateLoginInput';
 
+// Stop using prisma
+
 @Resolver()
 export class UserResolver {
+  @Mutation(() => Boolean)
+  async logout(@Ctx() { req, res }: Context): Promise<boolean> {
+    return new Promise((resolve) => {
+      req.session.destroy((err) => {
+        res.clearCookie('sid');
+
+        if (err) {
+          console.log(err);
+          resolve(false);
+        }
+
+        resolve(true);
+      });
+    });
+  }
+
+  @Query(() => User, { nullable: true })
+  async currentUser(@Ctx() { req, prisma }: Context): Promise<User | null> {
+    if (!req.session.userId) {
+      return null;
+    }
+
+    const user = await prisma.user.findUnique({
+      where: {
+        id: req.session.userId,
+      },
+    });
+
+    return user;
+  }
+
   @Mutation(() => UserResponse)
   async login(
     @Arg('usernameOrEmail') usernameOrEmail: string,

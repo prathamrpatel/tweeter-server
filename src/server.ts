@@ -5,10 +5,8 @@ import { ApolloServer } from 'apollo-server-express';
 import {
   ApolloServerPluginDrainHttpServer,
   ApolloServerPluginLandingPageGraphQLPlayground,
-  ApolloServerPluginLandingPageLocalDefault,
 } from 'apollo-server-core';
 import { buildSchema } from 'type-graphql';
-import { HelloResolver } from './graphql/resolvers/hello';
 import { PrismaClient } from '@prisma/client';
 import cors from 'cors';
 import { PostResolver } from './graphql/resolvers/post';
@@ -49,7 +47,8 @@ async function startServer() {
 
   const server = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [HelloResolver, PostResolver, UserResolver],
+      resolvers: [PostResolver, UserResolver],
+      emitSchemaFile: true,
     }),
     context: ({ req, res }) => ({ req, res, prisma }),
     csrfPrevention: true,

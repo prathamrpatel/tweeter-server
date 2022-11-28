@@ -15,7 +15,7 @@ model Post {
   body      String   @db.VarChar(280)
   author    User     @relation(fields: [authorId], references: [id])
   authorId  Int
-  createdAt DateTime @default(now())
+  createdAt DateTime @unique @default(now())
   updatedAt DateTime @updatedAt
 }
 

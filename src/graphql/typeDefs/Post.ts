@@ -1,4 +1,5 @@
 import { Field, Int, ObjectType } from 'type-graphql';
+import { User } from './User';
 
 @ObjectType()
 export class Post {
@@ -8,8 +9,11 @@ export class Post {
   @Field()
   body: string;
 
+  @Field(() => Int)
+  authorId: number;
+
   @Field()
-  authorId: Date;
+  author: User;
 
   @Field()
   createdAt: Date;
