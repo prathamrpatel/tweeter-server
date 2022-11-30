@@ -8,6 +8,7 @@ export async function getPaginatedPosts(
   authorId?: number
 ) {
   const { take, cursor } = input;
+  // Don't allow more than 50 posts to be pulled at once
   const realTake = Math.min(50, take);
   const realTakePlusOne = realTake + 1;
 

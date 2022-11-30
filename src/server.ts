@@ -25,23 +25,28 @@ async function startServer() {
   const redisClient = new Redis();
 
   app.use(
+    cors({
+      origin: 'http://localhost:3000',
+      credentials: true,
+    })
+  );
+
+  app.use(
     session({
       name: COOKIE_NAME,
-      store: new RedisStore({ client: redisClient }),
+      store: new RedisStore({
+        client: redisClient,
+        disableTouch: true,
+      }),
       saveUninitialized: false,
       secret: 'akdjfkeireidkfvncmvvvncmvnxmvderikjknmnkk',
       resave: false,
       cookie: {
         secure: PRODUCTION,
+        httpOnly: true,
+        sameSite: 'lax',
         maxAge: 1000 * 60 * 60 * 24 * 7,
       },
-    })
-  );
-
-  app.use(
-    cors({
-      origin: '*',
-      credentials: true,
     })
   );
 
