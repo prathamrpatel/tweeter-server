@@ -1,10 +1,8 @@
 import { Field, Int, ObjectType } from 'type-graphql';
-import { Comment } from './Comment';
-import { Like } from './Like';
 import { User } from './User';
 
 @ObjectType()
-export class Post {
+export class Comment {
   @Field(() => Int)
   id: number;
 
@@ -12,16 +10,13 @@ export class Post {
   body: string;
 
   @Field(() => Int)
+  postId: number;
+
+  @Field(() => Int)
   authorId: number;
 
-  @Field()
+  @Field(() => User)
   author: User;
-
-  @Field(() => [Like])
-  likes: Like[];
-
-  @Field(() => [Comment])
-  comments: Comment[];
 
   @Field()
   createdAt: Date;

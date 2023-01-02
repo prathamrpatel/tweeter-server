@@ -1,6 +1,5 @@
 import { Resolver, Query, Ctx, Arg, Mutation } from 'type-graphql';
 import { Context } from '../../types/Context';
-import { Post } from '../typeDefs/Post';
 import { RegisterInput } from '../typeDefs/RegisterInput';
 import { User } from '../typeDefs/User';
 import { UserResponse } from '../typeDefs/UserResponse';
@@ -8,8 +7,6 @@ import { validateRegisterInput } from '../../util/validateRegisterInput';
 import { hash, verify } from 'argon2';
 import { Prisma } from '@prisma/client';
 import { validateLoginInput } from '../../util/validateLoginInput';
-
-// Stop using prisma
 
 @Resolver()
 export class UserResolver {

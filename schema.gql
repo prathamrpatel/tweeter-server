@@ -3,6 +3,16 @@
 # !!!   DO NOT MODIFY THIS FILE BY YOURSELF   !!!
 # -----------------------------------------------
 
+type Comment {
+  author: User!
+  authorId: Int!
+  body: String!
+  createdAt: DateTime!
+  id: Int!
+  postId: Int!
+  updatedAt: DateTime!
+}
+
 """
 The javascript `Date` as string. Type represents date and time as the ISO Date string.
 """
@@ -13,12 +23,21 @@ type FieldError {
   message: String!
 }
 
+type Like {
+  postId: Int!
+  userId: Int!
+}
+
 type Mutation {
+  createComment(body: String!, postId: Int!): Comment!
   createPost(body: String!): PostResponse!
+  deleteComment(commentId: Int!): Boolean!
   deletePost(postId: Int!): Boolean!
+  likePost(postId: Int!): Boolean!
   login(password: String!, usernameOrEmail: String!): UserResponse!
   logout: Boolean!
   register(registerInput: RegisterInput!): UserResponse!
+  unlikePost(postId: Int!): Boolean!
   updatePost(body: String!, postId: Int!, title: String!): PostResponse
 }
 
@@ -36,8 +55,10 @@ type Post {
   author: User!
   authorId: Int!
   body: String!
+  comments: [Comment!]!
   createdAt: DateTime!
   id: Int!
+  likes: [Like!]!
   updatedAt: DateTime!
 }
 
@@ -48,6 +69,7 @@ type PostResponse {
 
 type Query {
   currentUser: User
+  getComments(postId: Int!): [Comment!]!
   getPostsByUser(input: PaginatedPostsInput!): PaginatedPosts!
   post(postId: Int!): Post
   posts(input: PaginatedPostsInput!): PaginatedPosts!

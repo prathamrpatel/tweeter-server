@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,21 +8,45 @@ datasource db {
 }
 
 model Post {
-  id        Int      @id @default(autoincrement())
-  body      String   @db.VarChar(280)
-  author    User     @relation(fields: [authorId], references: [id])
+  id        Int       @id @default(autoincrement())
+  body      String    @db.VarChar(280)
+  author    User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId  Int
-  createdAt DateTime @unique @default(now())
-  updatedAt DateTime @updatedAt
+  likes     Like[]
+  createdAt DateTime  @unique @default(now())
+  updatedAt DateTime  @updatedAt
+  comments  Comment[]
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  username  String   @unique
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
+  username  String    @unique
   name      String
   password  String
   posts     Post[]
+  likes     Like[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  comments  Comment[]
+}
+
+model Like {
+  post   Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId Int
+
+  @@id([postId, userId])
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  body      String
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId  Int
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId    Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

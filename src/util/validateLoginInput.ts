@@ -1,5 +1,4 @@
 import { FieldError } from '../graphql/typeDefs/FieldError';
-import { RegisterInput } from '../graphql/typeDefs/RegisterInput';
 
 export function validateLoginInput(usernameOrEmail: string, password: string) {
   const errors: FieldError[] = [];

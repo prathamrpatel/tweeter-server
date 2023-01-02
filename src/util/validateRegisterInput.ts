@@ -33,8 +33,9 @@ export function validateRegisterInput(registerInput: RegisterInput) {
     }
   }
 
-  // Change to 8 before deploying
-  if (password.length < 5) {
+  // Change to 8 in production
+  const required_length = process.env.NODE_ENV === 'production' ? 8 : 5;
+  if (password.length < required_length) {
     errors.push({
       field: 'password',
       message: 'Password must be at least 5 characters long',

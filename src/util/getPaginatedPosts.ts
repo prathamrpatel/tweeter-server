@@ -27,6 +27,12 @@ export async function getPaginatedPosts(
         },
         include: {
           author: true,
+          likes: true,
+          comments: {
+            include: {
+              author: true,
+            },
+          },
         },
       });
     } else {
@@ -39,6 +45,12 @@ export async function getPaginatedPosts(
         },
         include: {
           author: true,
+          likes: true,
+          comments: {
+            include: {
+              author: true,
+            },
+          },
         },
       });
     }
@@ -55,6 +67,12 @@ export async function getPaginatedPosts(
         },
         include: {
           author: true,
+          likes: true,
+          comments: {
+            include: {
+              author: true,
+            },
+          },
         },
       });
     } else {
@@ -66,6 +84,12 @@ export async function getPaginatedPosts(
         },
         include: {
           author: true,
+          likes: true,
+          comments: {
+            include: {
+              author: true,
+            },
+          },
         },
       });
     }

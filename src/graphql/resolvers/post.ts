@@ -10,6 +10,7 @@ import {
 import { isAuth } from '../../middleware/isAuth';
 import { Context } from '../../types/Context';
 import { getPaginatedPosts } from '../../util/getPaginatedPosts';
+import { Comment } from '../typeDefs/Comment';
 import { PaginatedPosts } from '../typeDefs/PaginatedPosts';
 import { PaginatedPostsInput } from '../typeDefs/PaginatedPostsInput';
 import { Post } from '../typeDefs/Post';
@@ -17,6 +18,109 @@ import { PostResponse } from '../typeDefs/PostResponse';
 
 @Resolver()
 export class PostResolver {
+  @Query(() => [Comment])
+  @UseMiddleware(isAuth)
+  async getComments(
+    @Arg('postId', () => Int) postId: number,
+    @Ctx() { prisma }: Context
+  ): Promise<Comment[]> {
+    const comments = await prisma.comment.findMany({
+      where: {
+        postId,
+      },
+      include: {
+        author: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    return comments;
+  }
+
+  @Mutation(() => Boolean)
+  @UseMiddleware(isAuth)
+  async deleteComment(
+    @Arg('commentId', () => Int) commentId: number,
+    @Ctx() { req, prisma }: Context
+  ): Promise<boolean> {
+    const comment = await prisma.comment.findUnique({
+      where: {
+        id: commentId,
+      },
+    });
+
+    if (!comment) {
+      return true;
+    }
+
+    if (comment.authorId === req.session.userId) {
+      await prisma.comment.delete({
+        where: {
+          id: commentId,
+        },
+      });
+    }
+
+    return true;
+  }
+
+  @Mutation(() => Comment)
+  @UseMiddleware(isAuth)
+  async createComment(
+    @Arg('postId', () => Int) postId: number,
+    @Arg('body') body: string,
+    @Ctx() { req, prisma }: Context
+  ): Promise<Comment> {
+    const comment = await prisma.comment.create({
+      data: {
+        body,
+        postId,
+        authorId: req.session.userId!,
+      },
+      include: {
+        author: true,
+      },
+    });
+
+    return comment;
+  }
+
+  @Mutation(() => Boolean)
+  @UseMiddleware(isAuth)
+  async unlikePost(
+    @Arg('postId', () => Int) postId: number,
+    @Ctx() { req, prisma }: Context
+  ): Promise<boolean> {
+    await prisma.like.delete({
+      where: {
+        postId_userId: {
+          postId,
+          userId: req.session.userId!,
+        },
+      },
+    });
+
+    return true;
+  }
+
+  @Mutation(() => Boolean)
+  @UseMiddleware(isAuth)
+  async likePost(
+    @Arg('postId', () => Int) postId: number,
+    @Ctx() { req, prisma }: Context
+  ): Promise<boolean> {
+    await prisma.like.create({
+      data: {
+        postId,
+        userId: req.session.userId!,
+      },
+    });
+
+    return true;
+  }
+
   @Mutation(() => Boolean)
   @UseMiddleware(isAuth)
   async deletePost(
@@ -84,6 +188,12 @@ export class PostResolver {
       },
       include: {
         author: true,
+        likes: true,
+        comments: {
+          include: {
+            author: true,
+          },
+        },
       },
     });
 
@@ -124,6 +234,12 @@ export class PostResolver {
       },
       include: {
         author: true,
+        likes: true,
+        comments: {
+          include: {
+            author: true,
+          },
+        },
       },
     });
 
@@ -142,6 +258,12 @@ export class PostResolver {
       },
       include: {
         author: true,
+        likes: true,
+        comments: {
+          include: {
+            author: true,
+          },
+        },
       },
     });
 
